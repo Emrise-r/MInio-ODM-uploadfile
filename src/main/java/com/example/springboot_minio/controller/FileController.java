@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,9 @@ public class FileController {
 
     @PostMapping(path = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Map<String, String> uploadFile(@RequestPart(value = "file", required = false) MultipartFile files) throws IOException {
-        Adapter.uploadFile(files.getOriginalFilename(), files.getBytes());
+//        Adapter.uploadFile(files.getOriginalFilename(), files.getBytes());
+        Path path = Path.of(files.getOriginalFilename());
+        Adapter.uploadFile(path, files.getInputStream(), files.getOriginalFilename());
         Map<String, String> result = new HashMap<>();
         result.put("key", files.getOriginalFilename());
         return result;
@@ -41,7 +44,7 @@ public class FileController {
         return ResponseEntity
                 .ok()
                 .contentLength(data.length)
-                .header("Content-type", "file")
+                .header("Content-type", "application/octet-stream")
                 .header("Content-disposition", "filename=\"" + file + "\"")
                 .body(resource);
 
