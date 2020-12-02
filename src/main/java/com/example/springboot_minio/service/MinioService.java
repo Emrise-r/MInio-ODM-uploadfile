@@ -4,8 +4,11 @@ import io.minio.MinioClient;
 import io.minio.PutObjectOptions;
 import io.minio.messages.Bucket;
 import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.file.ConfigurationSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -67,9 +70,12 @@ public class MinioService {
 //        return null;
 //    }
 
-    public InputStream getFile(Path path) throws IOException {
+    public Resource getFile(String file) throws IOException {
         try {
-            return minioClient.getObject(bucketName, path.toString());
+//            Path pathFile = Path.of(bucketName)
+            String pathFile = minioClient.getObjectUrl(bucketName, file);
+            Resource resource = new UrlResource(pathFile);
+            return resource;
         } catch (Exception e) {
             throw new RuntimeException("error read file", e);
         }

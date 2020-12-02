@@ -3,16 +3,19 @@ package com.example.springboot_minio.controller;
 
 import com.example.springboot_minio.service.MinioService;
 import io.minio.messages.Bucket;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
+
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
+
+
+import java.net.URLConnection;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -53,15 +56,13 @@ public class FileController {
 //    }
 
     @GetMapping(path = "/download")
-    public ResponseEntity<ByteArrayResource> uploadFile(@RequestParam(value = "key") String file) throws IOException {
-       InputStream inputStream = MinioService.getFile(Path.of(file));
-        InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
+    public ResponseEntity<Resource> uploadFile(@RequestParam(value = "file") String file) throws IOException {
+        Resource resource = MinioService.getFile(file);
 
         return ResponseEntity
                 .ok()
-                .contentLength(data.length)
-                .header("Content-type", "application/octet-stream")
-                .header("Content-disposition", "filename=\"" + file + "\"")
+                .header("Content-type", URLConnection.guessContentTypeFromName(file))
+                .header("Content-disposition","attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
 
     }
