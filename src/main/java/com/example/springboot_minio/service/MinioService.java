@@ -10,12 +10,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
 @Service
-public class Adapter {
+public class MinioService {
 
     @Autowired
     MinioClient minioClient;
@@ -50,19 +51,27 @@ public class Adapter {
             options.setContentType(contentType);
             minioClient.putObject(bucketName, source.toString(), file, options);
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
-    public byte[] getFile(String key) {
+//    public byte[] getFile(String key) {
+//        try {
+//            InputStream obj = minioClient.getObject(bucketName,  "//" + key);
+//            byte[] file = IOUtils.toByteArray(obj);
+//            obj.close();
+//            return file;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
+
+    public InputStream getFile(Path path) throws IOException {
         try {
-            InputStream obj = minioClient.getObject(bucketName,  "//" + key);
-            byte[] file = IOUtils.toByteArray(obj);
-            obj.close();
-            return file;
+            return minioClient.getObject(bucketName, path.toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("error read file", e);
         }
-        return null;
     }
 }
