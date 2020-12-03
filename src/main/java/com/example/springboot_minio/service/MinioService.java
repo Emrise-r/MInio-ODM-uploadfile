@@ -2,7 +2,7 @@ package com.example.springboot_minio.service;
 
 import io.minio.MinioClient;
 import io.minio.PutObjectOptions;
-import io.minio.messages.Bucket;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.List;
+
 
 @Service
 public class MinioService {
@@ -22,15 +22,6 @@ public class MinioService {
 
     @Value("${minio.bucket.name}")
     private String bucketName;
-
-//    public List<Bucket> getAllBuckets() {
-//        try {
-//            return minioClient.listBuckets();
-//        } catch (Exception e) {
-//            throw new RuntimeException(e.getMessage());
-//        }
-//    }
-
 
     public void uploadFile (Path source, InputStream file, String contentType) {
         try {

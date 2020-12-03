@@ -14,7 +14,7 @@ public class MinioConfig {
     private String accessKey;
 
     @Value("${minio.secret.key}")
-    private String accessSecret;
+    private String secretKey;
 
     @Value("${minio.url}")
     private String minioUrl;
@@ -22,7 +22,7 @@ public class MinioConfig {
     @Bean
     public MinioClient generateClient() {
         try {
-            MinioClient client = new MinioClient(minioUrl, accessKey, accessSecret);
+            MinioClient client = new MinioClient(minioUrl, accessKey, secretKey);
             return client;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());

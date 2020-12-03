@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URLConnection;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,11 +28,6 @@ public class FileController {
 
     @Autowired
     MinioService MinioService;
-
-//    @GetMapping(path = "/buckets")
-//    public List<Bucket> listBuckets() {
-//        return MinioService.getAllBuckets();
-//    }
 
     @PostMapping(path = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Map<String, String> uploadFile(@RequestPart(value = "file", required = false) MultipartFile files) throws IOException {
