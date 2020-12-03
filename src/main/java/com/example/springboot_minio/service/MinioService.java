@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.file.ConfigurationSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -58,23 +59,13 @@ public class MinioService {
         }
     }
 
-//    public byte[] getFile(String key) {
-//        try {
-//            InputStream obj = minioClient.getObject(bucketName,  "//" + key);
-//            byte[] file = IOUtils.toByteArray(obj);
-//            obj.close();
-//            return file;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
 
     public Resource getFile(String file) throws IOException {
         try {
 //            Path pathFile = Path.of(bucketName)
-            String pathFile = minioClient.getObjectUrl(bucketName, file);
-            Resource resource = new UrlResource(pathFile);
+            InputStream is = minioClient.getObject(bucketName, file);
+            InputStreamResource inputStreamResource = new InputStreamResource(is);
+            Resource resource = inputStreamResource;
             return resource;
         } catch (Exception e) {
             throw new RuntimeException("error read file", e);

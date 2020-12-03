@@ -6,6 +6,7 @@ import io.minio.messages.Bucket;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class FileController {
 
     @PostMapping(path = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Map<String, String> uploadFile(@RequestPart(value = "file", required = false) MultipartFile files) throws IOException {
-//        Adapter.uploadFile(files.getOriginalFilename(), files.getBytes());
+
         Path path = Path.of(files.getOriginalFilename());
         MinioService.uploadFile(path, files.getInputStream(), files.getOriginalFilename());
         Map<String, String> result = new HashMap<>();
@@ -42,23 +43,10 @@ public class FileController {
         return result;
     }
 
-//    @GetMapping(path = "/download")
-//    public ResponseEntity<ByteArrayResource> uploadFile(@RequestParam(value = "key") String file) throws IOException {
-//        byte[] data = Adapter.getFile(file);
-//        ByteArrayResource resource = new ByteArrayResource(data);
-//        return ResponseEntity
-//                .ok()
-//                .contentLength(data.length)
-//                .header("Content-type", "application/octet-stream")
-//                .header("Content-disposition", "filename=\"" + file + "\"")
-//                .body(resource);
-//
-//    }
 
     @GetMapping(path = "/download")
     public ResponseEntity<Resource> uploadFile(@RequestParam(value = "file") String file) throws IOException {
         Resource resource = MinioService.getFile(file);
-
         return ResponseEntity
                 .ok()
                 .header("Content-type", URLConnection.guessContentTypeFromName(file))
