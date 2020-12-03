@@ -44,12 +44,4 @@ public class MinioService {
             throw new RuntimeException("error read file", e);
         }
     }
-
-//    public void getAccessFile(String file) {
-//        try {
-//            minioClient.presignedPutObject()
-//        } catch (Exception e) {
-//            throw new RuntimeException("error get access file", e);
-//        }
-//    }
 }
