@@ -6,6 +6,7 @@ import io.minio.messages.Bucket;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -29,10 +30,10 @@ public class FileController {
     @Autowired
     MinioService MinioService;
 
-    @GetMapping(path = "/buckets")
-    public List<Bucket> listBuckets() {
-        return MinioService.getAllBuckets();
-    }
+//    @GetMapping(path = "/buckets")
+//    public List<Bucket> listBuckets() {
+//        return MinioService.getAllBuckets();
+//    }
 
     @PostMapping(path = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Map<String, String> uploadFile(@RequestPart(value = "file", required = false) MultipartFile files) throws IOException {

@@ -23,13 +23,13 @@ public class MinioService {
     @Value("${minio.bucket.name}")
     private String bucketName;
 
-    public List<Bucket> getAllBuckets() {
-        try {
-            return minioClient.listBuckets();
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
+//    public List<Bucket> getAllBuckets() {
+//        try {
+//            return minioClient.listBuckets();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
+//    }
 
 
     public void uploadFile (Path source, InputStream file, String contentType) {
@@ -53,4 +53,12 @@ public class MinioService {
             throw new RuntimeException("error read file", e);
         }
     }
+
+//    public void getAccessFile(String file) {
+//        try {
+//            minioClient.presignedPutObject()
+//        } catch (Exception e) {
+//            throw new RuntimeException("error get access file", e);
+//        }
+//    }
 }
