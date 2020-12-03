@@ -25,6 +25,7 @@ import java.util.Map;
 @RestController
 @CrossOrigin("*")
 public class FileController {
+
     @Autowired
     MinioService MinioService;
 
@@ -35,7 +36,6 @@ public class FileController {
 
     @PostMapping(path = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Map<String, String> uploadFile(@RequestPart(value = "file", required = false) MultipartFile files) throws IOException {
-
         Path path = Path.of(files.getOriginalFilename());
         MinioService.uploadFile(path, files.getInputStream(), files.getOriginalFilename());
         Map<String, String> result = new HashMap<>();
