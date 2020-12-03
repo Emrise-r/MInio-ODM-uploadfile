@@ -2,12 +2,8 @@ package com.example.springboot_minio.controller;
 
 
 import com.example.springboot_minio.service.MinioService;
-import io.minio.messages.Bucket;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
