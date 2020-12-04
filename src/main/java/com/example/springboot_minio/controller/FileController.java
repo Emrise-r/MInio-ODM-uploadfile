@@ -1,10 +1,12 @@
 package com.example.springboot_minio.controller;
 
 
-import com.example.springboot_minio.service.MinioService;
+import com.example.springboot_minio.service.MinIOBucketService;
+import com.example.springboot_minio.service.MinIOObjectService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +16,6 @@ import java.io.IOException;
 
 
 import java.net.URLConnection;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,26 +24,42 @@ import java.util.Map;
 public class FileController {
 
     @Autowired
-    MinioService MinioService;
+    MinIOObjectService minIOObjectService;
 
     @PostMapping(path = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Map<String, String> uploadFile(@RequestPart(value = "file", required = false) MultipartFile files) throws IOException {
-        Path path = Path.of(files.getOriginalFilename());
-        MinioService.uploadFile(path, files.getInputStream(), files.getOriginalFilename());
+    public ResponseEntity<Map<String, String>> uploadFile(@RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+        String contentType = file.getContentType();
+        minIOObjectService.uploadFile(file.getInputStream(), file.getOriginalFilename(), file.getSize(), contentType);
         Map<String, String> result = new HashMap<>();
-        result.put("key", files.getOriginalFilename());
-        return result;
+        result.put("key", file.getOriginalFilename());
+        return ResponseEntity
+                .ok()
+                .header("Content-type", URLConnection.guessContentTypeFromName(contentType))
+                .body(result);
     }
 
 
     @GetMapping(path = "/download")
-    public ResponseEntity<Resource> uploadFile(@RequestParam(value = "file") String file) throws IOException {
-        Resource resource = MinioService.getFile(file);
+    public ResponseEntity<?> uploadFile(@RequestParam(value = "file") String file) {
+        Resource resource = minIOObjectService.getFile(file);
+        if(resource == null) {
+            return new ResponseEntity("file not found", HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity
                 .ok()
                 .header("Content-type", URLConnection.guessContentTypeFromName(file))
                 .header("Content-disposition","attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
-
     }
+
+
+
+    @GetMapping("/getObjUrl")
+    public ResponseEntity<String> getObjUrl(@RequestParam("file") String file) {
+        return ResponseEntity
+                .ok()
+                .body(minIOObjectService.getObjUrl(file));
+    }
+
+
 }
