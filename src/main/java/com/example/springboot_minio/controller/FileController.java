@@ -60,6 +60,4 @@ public class FileController {
                 .ok()
                 .body(minIOObjectService.getObjUrl(file));
     }
-
-
 }
