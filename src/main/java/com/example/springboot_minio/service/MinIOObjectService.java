@@ -59,19 +59,22 @@ public class MinIOObjectService {
 
     public String getObjUrl(String name) {
         try {
-            String url = minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .method(Method.GET)
-                            .bucket(bucketName)
-                            .object(name)
-                            .expiry(7, TimeUnit.DAYS)
-                            .build()
-            );
-            System.out.println(url);
+//            String url = minioClient.getPresignedObjectUrl(
+//                    GetPresignedObjectUrlArgs.builder()
+//                            .method(Method.GET)
+//                            .bucket(bucketName)
+//                            .object(name)
+//                            .expiry(7, TimeUnit.DAYS)
+//                            .build()
+//            );
+//            System.out.println(url);
+            String url = minioClient.getObjectUrl(bucketName, name);
             return url;
         } catch (Exception e) {
             throw new RuntimeException("can't get url obj", e);
         }
     }
+
+
 
 }

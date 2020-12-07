@@ -30,8 +30,9 @@ public class FileController {
     public ResponseEntity<Map<String, String>> uploadFile(@RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
         String contentType = file.getContentType();
         minIOObjectService.uploadFile(file.getInputStream(), file.getOriginalFilename(), file.getSize(), contentType);
+        String url = minIOObjectService.getObjUrl(file.getName());
         Map<String, String> result = new HashMap<>();
-        result.put("key", file.getOriginalFilename());
+        result.put("key", url);
         return ResponseEntity
                 .ok()
                 .header("Content-type", URLConnection.guessContentTypeFromName(contentType))
