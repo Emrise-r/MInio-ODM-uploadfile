@@ -45,7 +45,6 @@ public class MinioConfig {
                             .builder()
                             .bucket(bucketName)
                             .build());
-//            minioClient.deleteBucketPolicy(DeleteBucketPolicyArgs.builder().bucket(bucketName).build());
             return minioClient;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());

@@ -1,6 +1,7 @@
 package com.example.springboot_minio.controller;
 
-import com.example.springboot_minio.service.MinIOBucketService;
+import com.example.springboot_minio.exception.MinioException;
+import com.example.springboot_minio.service.impl.MinIOBucketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,12 @@ public class BucketController {
     MinIOBucketService minIOBucketService;
 
     @GetMapping("/getPolicy")
-    public ResponseEntity<String> getPolicy() {
+    public ResponseEntity<String> getPolicy() throws MinioException {
         return ResponseEntity
                 .ok()
                 .body(minIOBucketService.getPolicy());
     }
+
     @GetMapping("/listBucket")
     public ResponseEntity<List<String>> listBucket() {
         List<String> bucketList = minIOBucketService.listBucket();

@@ -1,18 +1,21 @@
-package com.example.springboot_minio.service;
+package com.example.springboot_minio.service.impl;
 
+import com.example.springboot_minio.exception.MinioException;
 import io.minio.*;
 
+import io.minio.errors.*;
 import io.minio.http.Method;
-import io.minio.messages.Bucket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
 
 
@@ -59,22 +62,34 @@ public class MinIOObjectService {
 
     public String getObjUrl(String name) {
         try {
-//            String url = minioClient.getPresignedObjectUrl(
-//                    GetPresignedObjectUrlArgs.builder()
-//                            .method(Method.GET)
-//                            .bucket(bucketName)
-//                            .object(name)
-//                            .expiry(7, TimeUnit.DAYS)
-//                            .build()
-//            );
+            String url = minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucketName)
+                            .object(name)
+                            .expiry(7, TimeUnit.DAYS)
+                            .build()
+            );
 //            System.out.println(url);
-            String url = minioClient.getObjectUrl(bucketName, name);
+//            String url = minioClient.getObjectUrl(bucketName, name);
             return url;
         } catch (Exception e) {
             throw new RuntimeException("can't get url obj", e);
         }
     }
 
+    public void deleteObject(String name) throws MinioException {
+        try {
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(name)
+                            .build()
+            );
+        } catch (Exception e) {
+            throw new MinioException("can't delete object'" , HttpStatus.CONFLICT);
+        }
+    }
 
 
 }

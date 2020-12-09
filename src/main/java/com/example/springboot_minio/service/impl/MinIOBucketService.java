@@ -1,10 +1,13 @@
-package com.example.springboot_minio.service;
+package com.example.springboot_minio.service.impl;
 
+import com.example.springboot_minio.exception.MinioException;
 import io.minio.GetBucketPolicyArgs;
 import io.minio.MinioClient;
+import io.minio.SetBucketPolicyArgs;
 import io.minio.messages.Bucket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,12 +22,12 @@ public class MinIOBucketService {
     @Autowired
     MinioClient minioClient;
 
-    public String getPolicy() {
+    public String getPolicy() throws MinioException {
         try {
             String config = minioClient.getBucketPolicy(GetBucketPolicyArgs.builder().bucket(bucketName).build());
             return config;
         } catch (Exception e) {
-            throw new RuntimeException("can't get policy", e);
+            throw new MinioException("can't get policy", e, HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
