@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class MinIOObjectService {
+    private static final String imgDefault = "default/ronnin.png";
 
     @Value("${minio.bucket.name}")
     private String bucketName;
@@ -28,7 +29,7 @@ public class MinIOObjectService {
     @Autowired
     MinioClient minioClient;
 
-    public void uploadFile (InputStream file, String name, Long size, String contentType) {
+    public void uploadFile (InputStream file, String name, Long size, String contentType) throws MinioException {
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
@@ -38,11 +39,11 @@ public class MinIOObjectService {
                             .contentType(contentType)
                             .build());
         } catch (Exception e) {
-            throw new RuntimeException("can't upload file", e);
+            throw new MinioException("can't upload file", e, HttpStatus.BAD_REQUEST);
         }
     }
 
-    public Resource getFile(String name) {
+    public Resource getFile(String name) throws MinioException {
         try {
             InputStream inputStream = minioClient.getObject(
                     GetObjectArgs.builder()
@@ -56,11 +57,11 @@ public class MinIOObjectService {
                 return null;
             }
         } catch (Exception e) {
-            throw new RuntimeException("file does not exist", e);
+            throw new MinioException("file does not exist", e, HttpStatus.NOT_FOUND);
         }
     }
 
-    public String getObjUrl(String name) {
+    public String getObjUrl(String name) throws MinioException {
         try {
             String url = minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
@@ -70,26 +71,24 @@ public class MinIOObjectService {
                             .expiry(7, TimeUnit.DAYS)
                             .build()
             );
-//            System.out.println(url);
-//            String url = minioClient.getObjectUrl(bucketName, name);
             return url;
         } catch (Exception e) {
-            throw new RuntimeException("can't get url obj", e);
+            throw new MinioException("can't get url obj", e, HttpStatus.NOT_FOUND);
         }
     }
 
     public void deleteObject(String name) throws MinioException {
-        try {
-            minioClient.removeObject(
-                    RemoveObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(name)
-                            .build()
-            );
-        } catch (Exception e) {
-            throw new MinioException("can't delete object'" , HttpStatus.CONFLICT);
+        if (!name.contains(imgDefault)) {
+            try {
+                minioClient.removeObject(
+                        RemoveObjectArgs.builder()
+                                .bucket(bucketName)
+                                .object(name)
+                                .build()
+                );
+            } catch (Exception e) {
+                throw new MinioException("can't delete object'", HttpStatus.CONFLICT);
+            }
         }
     }
-
-
 }
